@@ -13,7 +13,6 @@
         <v-carousel style="cursor: pointer">
           <v-carousel-item
             v-for="meetup in meetups"
-
             :src="meetup.imageUrl"
             :key="meetup.id"
             @click="onLoadMeetup(meetup.id)">
@@ -34,25 +33,9 @@
 
 <script>
   export default {
-    data() {
-      return {
-        meetups: [
-          {
-            imageUrl: 'https://www.publicdomainpictures.net/pictures/170000/velka/new-york-1462211884X1J.jpg',
-            id: '3123fgsdf123',
-            title: 'Meetup in New York'
-          },
-          {
-            imageUrl: 'https://cdn.pixabay.com/photo/2018/12/17/18/53/paris-3881047_960_720.jpg',
-            id: 'tafwed2g323r',
-            title: 'Meetup in Paris'
-          },
-          {
-            imageUrl: 'https://cdn.pixabay.com/photo/2015/04/13/09/23/ukraine-720233_960_720.jpg',
-            id: 'sdtshgweg43',
-            title: 'Meetup in Kiev'
-          }
-        ]
+    computed: {
+      meetups() {
+        return this.$store.getters.feturedMeetups
       }
     },
     methods: {
