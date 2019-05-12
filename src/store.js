@@ -9,17 +9,20 @@ export default new Vuex.Store({
       {
         imageUrl: 'https://www.publicdomainpictures.net/pictures/170000/velka/new-york-1462211884X1J.jpg',
         id: '3123fgsdf123',
-        title: 'Meetup in New York'
+        title: 'Meetup in New York',
+        date: '2017-07-17'
       },
       {
         imageUrl: 'https://cdn.pixabay.com/photo/2018/12/17/18/53/paris-3881047_960_720.jpg',
         id: 'tafwed2g323r',
-        title: 'Meetup in Paris'
+        title: 'Meetup in Paris',
+        date: '2017-07-19'
       },
       {
         imageUrl: 'https://cdn.pixabay.com/photo/2015/04/13/09/23/ukraine-720233_960_720.jpg',
         id: 'sdtshgweg43',
-        title: 'Meetup in Kiev'
+        title: 'Meetup in Kiev',
+        date: '2018-08-18'
       }
     ],
     user: {
