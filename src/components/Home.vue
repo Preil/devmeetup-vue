@@ -32,18 +32,18 @@
 </template>
 
 <script>
-  export default {
-    computed: {
-      meetups() {
-        return this.$store.getters.feturedMeetups
-      }
-    },
-    methods: {
-      onLoadMeetup(id) {
-        this.$router.push('/meetups/' + id)
-      }
+export default {
+  computed: {
+    meetups () {
+      return this.$store.getters.feturedMeetups
+    }
+  },
+  methods: {
+    onLoadMeetup (id) {
+      this.$router.push('/meetups/' + id)
     }
   }
+}
 </script>
 
 <style scoped>

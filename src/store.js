@@ -35,15 +35,14 @@ export default new Vuex.Store({
       id: 'sgterwgtdf2342342',
       registeredMeetups: ['sdtshgweg43']
     }
-  }
-  ,
+  },
   mutations: {
-    createMeetup(state, payload){
+    createMeetup (state, payload) {
       state.loadedMeetups.push(payload)
     }
   },
   actions: {
-    createMeetup({commit}, payload) {
+    createMeetup ({ commit }, payload) {
       const meetup = {
         title: payload.title,
         location: payload.location,
@@ -58,12 +57,12 @@ export default new Vuex.Store({
   },
   getters: {
     loadedMeetups (state) {
-      return state.loadedMeetups.sort((meetupA, meetupB)=>{
+      return state.loadedMeetups.sort((meetupA, meetupB) => {
         return meetupA.date > meetupB.date
       })
     },
-    feturedMeetups(state, getters){
-      return getters.loadedMeetups.slice(0,5)
+    feturedMeetups (state, getters) {
+      return getters.loadedMeetups.slice(0, 5)
     },
     loadedMeetup (state) {
       return (meetupId) => {
@@ -71,7 +70,6 @@ export default new Vuex.Store({
           return meetup.id === meetupId
         })
       }
-
     }
   }
 })
