@@ -5,7 +5,7 @@
         <v-card>
           <v-card-text>
             <v-container>
-              <form>
+              <form @submit.prevent="onSignup">
                 <v-layout row>
                   <v-flex xs12>
                     <v-text-field
@@ -36,7 +36,7 @@
                       name="confimPassword"
                       label="Confirm Password"
                       id="confimPassword"
-                      v-model="confimPassword"
+                      v-model="confirmPassword"
                       type="password"
                       :rules="rules">
                     </v-text-field>
@@ -57,23 +57,26 @@
 </template>
 
 <script>
-export default {
-  data () {
-    return {
-      email: '',
-      password: '',
-      confirmPassword: '',
-      rules: [
-        v => v === this.password || 'check your password',
-        v => !!v || 'you must be type on this field'
-      ]
-    }
-  },
-  methods: {
-    onSignup () {
-      // Vuex
-      console.log({ email: this.email, password: this.password, confirmPassword: this.confirmPassword })
+  export default {
+    data() {
+      return {
+        email: '',
+        password: '',
+        confirmPassword: '',
+        rules: [
+          v => v === this.password || 'check your password',
+          v => !!v || 'you must be type on this field'
+        ]
+      }
+    },
+    methods: {
+      onSignup() {
+        // Vuex
+        console.log({email: this.email, password: this.password, confirmPassword: this.confirmPassword})
+        this.$store.dispatch('signUpUser', {
+          email: this.email, password: this.password
+        })
+      }
     }
   }
-}
 </script>

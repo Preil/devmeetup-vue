@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import * as firebase from 'firebase'
 
 Vue.use(Vuex)
 
@@ -37,12 +38,15 @@ export default new Vuex.Store({
     }
   },
   mutations: {
-    createMeetup (state, payload) {
+    createMeetup(state, payload) {
       state.loadedMeetups.push(payload)
+    },
+    setUser(state, payload){
+      state.user = payload
     }
   },
   actions: {
-    createMeetup ({ commit }, payload) {
+    createMeetup({commit}, payload) {
       const meetup = {
         title: payload.title,
         location: payload.location,
@@ -53,18 +57,37 @@ export default new Vuex.Store({
       }
       // Reach out to firebase and store it
       commit('createMeetup', meetup)
+    },
+    signUpUser({commit}, payload) {
+      firebase.auth().createUserWithEmailAndPassword(payload.email, payload.password)
+        .then(
+          user => {
+            const newUser = {
+              id: user.user.uid,
+              registeredMeetups: []
+            }
+            console.log(newUser.id)
+            commit('setUser', newUser)
+          }
+        )
+        .catch(
+          error => {
+            console.log(error)
+          }
+        )
+
     }
   },
   getters: {
-    loadedMeetups (state) {
+    loadedMeetups(state) {
       return state.loadedMeetups.sort((meetupA, meetupB) => {
         return meetupA.date > meetupB.date
       })
     },
-    feturedMeetups (state, getters) {
+    feturedMeetups(state, getters) {
       return getters.loadedMeetups.slice(0, 5)
     },
-    loadedMeetup (state) {
+    loadedMeetup(state) {
       return (meetupId) => {
         return state.loadedMeetups.find((meetup) => {
           return meetup.id === meetupId
