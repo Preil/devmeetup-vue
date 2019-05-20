@@ -15,3 +15,9 @@ Vue.use(Vuetify, {
     success: colors.green.lighten2
   }
 })
+Vue.use(Vuetify,{
+  options: {
+    customProperties: true
+  }
+})
+

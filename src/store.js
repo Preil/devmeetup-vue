@@ -32,7 +32,9 @@ export default new Vuex.Store({
         description: 'Hydropark party'
       }
     ],
-    user: null
+    user: null,
+    loading: false,
+    error: null
   },
   mutations: {
     createMeetup(state, payload) {
@@ -40,6 +42,15 @@ export default new Vuex.Store({
     },
     setUser(state, payload) {
       state.user = payload
+    },
+    setLoading(state, payload) {
+      state.loading = payload
+    },
+    setError(state, payload) {
+      state.error = payload
+    },
+    clearError(state) {
+      state.error = null
     }
   },
   actions: {
@@ -56,9 +67,12 @@ export default new Vuex.Store({
       commit('createMeetup', meetup)
     },
     signUpUser({commit}, payload) {
+      commit('setLoading', true)
+      commit('clearError')
       firebase.auth().createUserWithEmailAndPassword(payload.email, payload.password)
         .then(
           user => {
+            commit('setLoading', false)
             const newUser = {
               id: user.user.uid,
               registeredMeetups: []
@@ -69,14 +83,19 @@ export default new Vuex.Store({
         )
         .catch(
           error => {
+            commit('setLoading', false)
+            commit('setError', error)
             console.log(error)
           }
         )
     },
-    signUserIn({commit}, payload){
+    signUserIn({commit}, payload) {
+      commit('setLoading', true)
+      commit('clearError')
       firebase.auth().signInWithEmailAndPassword(payload.email, payload.password)
         .then(
-          user=>{
+          user => {
+            commit('setLoading', false)
             const newUser = {
               id: user.user.uid,
               registeredMeetups: []
@@ -85,10 +104,15 @@ export default new Vuex.Store({
           }
         )
         .catch(
-          error =>{
+          error => {
+            commit('setLoading', false)
+            commit('setError', error)
             console.log(error)
           }
         )
+    },
+    clearError({commit}, payload) {
+      commit('clearError')
     }
   },
   getters: {
@@ -109,6 +133,12 @@ export default new Vuex.Store({
     },
     user(state) {
       return state.user
+    },
+    error(state) {
+      return state.error
+    },
+    loading(state) {
+      return state.loading
     }
   }
 })
