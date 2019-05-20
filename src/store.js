@@ -32,16 +32,13 @@ export default new Vuex.Store({
         description: 'Hydropark party'
       }
     ],
-    user: {
-      id: 'sgterwgtdf2342342',
-      registeredMeetups: ['sdtshgweg43']
-    }
+    user: null
   },
   mutations: {
     createMeetup(state, payload) {
       state.loadedMeetups.push(payload)
     },
-    setUser(state, payload){
+    setUser(state, payload) {
       state.user = payload
     }
   },
@@ -75,7 +72,23 @@ export default new Vuex.Store({
             console.log(error)
           }
         )
-
+    },
+    signUserIn({commit}, payload){
+      firebase.auth().signInWithEmailAndPassword(payload.email, payload.password)
+        .then(
+          user=>{
+            const newUser = {
+              id: user.user.uid,
+              registeredMeetups: []
+            }
+            commit('setUser', newUser)
+          }
+        )
+        .catch(
+          error =>{
+            console.log(error)
+          }
+        )
     }
   },
   getters: {
@@ -93,6 +106,9 @@ export default new Vuex.Store({
           return meetup.id === meetupId
         })
       }
+    },
+    user(state) {
+      return state.user
     }
   }
 })
