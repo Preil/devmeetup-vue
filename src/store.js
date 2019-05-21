@@ -45,6 +45,7 @@ export default new Vuex.Store({
     },
     setUser(state, payload) {
       state.user = payload
+      console.log(state.user)
     },
     setLoading(state, payload) {
       state.loading = payload
@@ -126,6 +127,10 @@ export default new Vuex.Store({
             console.log(error)
           }
         )
+    },
+    logout({commit}){
+      firebase.auth().signOut()
+      commit('setUser', null)
     },
     autoSignIn({commit}, payload) {
       commit('setUser', {id: payload.uid, registeredMeetups: []})

@@ -4,7 +4,7 @@
       <v-flex xs12 sm6 class="text-xs-center text-sm-right">
         <v-btn large router to="/meetups" class="info">Explore Meetups</v-btn>
       </v-flex>
-      <v-flex xs12 sm6 class="text-xs-center text-sm-left">
+      <v-flex xs12 sm6 class="text-xs-center text-sm-left" v-if="userIsAuthenticated">
         <v-btn large router to="/meetups/new" class="info">Organise Meetup</v-btn>
       </v-flex>
     </v-layout>
@@ -49,6 +49,9 @@
       },
       loading() {
        return this.$store.getters.loading
+      },
+      userIsAuthenticated(){
+        return this.$store.getters.user !== null && this.$store.getters.user !== undefined
       }
     },
     methods: {
