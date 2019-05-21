@@ -37,7 +37,7 @@ export default new Vuex.Store({
     error: null
   },
   mutations: {
-    setLoadedMeetups(state, payload){
+    setLoadedMeetups(state, payload) {
       state.loadedMeetups = payload
     },
     createMeetup(state, payload) {
@@ -126,6 +126,9 @@ export default new Vuex.Store({
             console.log(error)
           }
         )
+    },
+    autoSignIn({commit}, payload) {
+      commit('setUser', {id: payload.uid, registeredMeetups: []})
     },
     signUserIn({commit}, payload) {
       commit('setLoading', true)
