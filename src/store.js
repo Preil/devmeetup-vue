@@ -12,6 +12,19 @@ export default new Vuex.Store({
     error: null
   },
   mutations: {
+    registerUserForMeetup(state, payload) {
+      const id = payload.id
+      if (state.user.registeredMeetups.findIndex(meetup => meetup.id === id) >= 0) {
+        return
+      }
+      state.user.registeredMeetups.push(id)
+      state.user.fbKeys[id] = payload.fbKey
+    },
+    unregisterUserFromMeetup(state, payload) {
+      const registeredMeetups = state.user.registeredMeetups
+      registeredMeetups.splice(registeredMeetups.findIndex(meetup => meetup.id === payload), 1)
+      Reflect.deleteProperty(state.user.fbKeys, payload)
+    },
     setLoadedMeetups(state, payload) {
       state.loadedMeetups = payload
     },
@@ -47,6 +60,37 @@ export default new Vuex.Store({
     }
   },
   actions: {
+    registerUserForMeetup({commit, getters}, payload) {
+      commit('setLoading', true)
+      const user = getters.user
+      firebase.database().ref('/users/' + user.id).child('/registrations/')
+        .push(payload)
+        .then(data => {
+          commit('setLoading', false)
+          commit('registerUserForMeetup', {id: payload, fbKey: data.key})
+        })
+        .catch(error => {
+          console.log(error)
+          commit('setLoading', false)
+        })
+    },
+    unregisterUserFromMeetup({commit, getters}, payload) {
+      commit('setLoading', true)
+      const user = getters.user
+      if (!user.fbKeys) {
+        return
+      }
+      const fbKey = user.fbKeys[payload]
+      firebase.database().ref('/users/' + user.id + '/registrations').child(fbKey).remove()
+        .then(() => {
+          commit('setLoading', false)
+          commit('unregisterUserFromMeetup', payload)
+        })
+        .catch(error => {
+          console.log(error)
+          commit('setLoading', false)
+        })
+    },
     loadMeetups({commit}) {
       commit('setLoading', true)
       firebase.database().ref('meetups').once('value')
@@ -143,7 +187,8 @@ export default new Vuex.Store({
             commit('setLoading', false)
             const newUser = {
               id: user.user.uid,
-              registeredMeetups: []
+              registeredMeetups: [],
+              fbKeys: {}
             }
             console.log(newUser.id)
             commit('setUser', newUser)
@@ -156,17 +201,18 @@ export default new Vuex.Store({
             console.log(error)
           }
         )
-    }
-    ,
+    },
     logout({commit}) {
       firebase.auth().signOut()
       commit('setUser', null)
-    }
-    ,
+    },
     autoSignIn({commit}, payload) {
-      commit('setUser', {id: payload.uid, registeredMeetups: []})
-    }
-    ,
+      commit('setUser', {
+        id: payload.uid,
+        registeredMeetups: [],
+        fbKeys: {}
+      })
+    },
     signUserIn({commit}, payload) {
       commit('setLoading', true)
       commit('clearError')
@@ -176,7 +222,8 @@ export default new Vuex.Store({
             commit('setLoading', false)
             const newUser = {
               id: user.user.uid,
-              registeredMeetups: []
+              registeredMeetups: [],
+              fbKeys: {}
             }
             commit('setUser', newUser)
           }
@@ -188,8 +235,7 @@ export default new Vuex.Store({
             console.log(error)
           }
         )
-    }
-    ,
+    },
     clearError({commit}, payload) {
       commit('clearError')
     }
@@ -199,28 +245,23 @@ export default new Vuex.Store({
       return state.loadedMeetups.sort((meetupA, meetupB) => {
         return meetupA.date > meetupB.date
       })
-    }
-    ,
+    },
     feturedMeetups(state, getters) {
       return getters.loadedMeetups.slice(0, 5)
-    }
-    ,
+    },
     loadedMeetup(state) {
       return (meetupId) => {
         return state.loadedMeetups.find((meetup) => {
           return meetup.id === meetupId
         })
       }
-    }
-    ,
+    },
     user(state) {
       return state.user
-    }
-    ,
+    },
     error(state) {
       return state.error
-    }
-    ,
+    },
     loading(state) {
       return state.loading
     }
